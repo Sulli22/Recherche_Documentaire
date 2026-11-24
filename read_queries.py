@@ -2,9 +2,11 @@ import nltk
 from nltk.stem import PorterStemmer
 from nltk.probability import FreqDist
 from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 from bs4 import BeautifulSoup
 
 nltk.download("stopwords")
+nltk.download('punkt_tab')
 def charger_requete(nom_fichier):
     stemmer = PorterStemmer()
     tab=[]
@@ -31,6 +33,7 @@ def charger_requete(nom_fichier):
 
 def charger_stopWord(nom_fichier):
     tab=set(stopwords.words("english"))
+
     with open(nom_fichier, 'r') as f:
       lignes = f.readlines() 
 
@@ -66,8 +69,7 @@ def charger_donnees(fichiers):
     
           texte = doc.find("text").get_text()
       
-          texte = texte.replace("'", " ").replace("`", " ")
-          texte = texte.split()
+          texte = word_tokenize(texte)
           
           fdist = FreqDist()
           for mot in texte:
