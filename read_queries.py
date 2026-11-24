@@ -1,4 +1,4 @@
-import nltk
+
 from nltk.stem import PorterStemmer
 from nltk.probability import FreqDist
 from nltk.corpus import stopwords
@@ -9,7 +9,7 @@ nltk.download("stopwords")
 nltk.download('punkt_tab')
 def charger_requete(nom_fichier):
     stemmer = PorterStemmer()
-    tab=[]
+    tab={}
     stopW=charger_stopWord("data/stopwords.txt")
     with open(nom_fichier, 'r') as f:
       lignes = f.readlines() 
@@ -17,14 +17,22 @@ def charger_requete(nom_fichier):
       for ligne in lignes:
         lg=[]
         lg.append(ligne.strip().split())
+        print(lg[0][0])
+        id_req=lg[0][0]
+        tab.setdefault(id_req,{})
         for aux in lg:
-            w=[]
-            for wrd in aux:
+           
+            cont=[]
+            for wrd in aux[1:]:
               if(wrd not in stopW):
                
-                w.append(stemmer.stem(wrd))
+               w=stemmer.stem(wrd)
+               cont.append(w)
+            tab[id_req]=FreqDist(cont)
 
-            tab.append(w)
+
+
+          
 
     return tab
 
@@ -38,8 +46,7 @@ def charger_stopWord(nom_fichier):
       lignes = f.readlines() 
 
       for ligne in lignes:
-        if ligne.strip() not in tab:
-           tab.add(ligne.strip())
+        tab.append(ligne.strip())
 
     return tab
 
@@ -50,7 +57,12 @@ def charger_stemp(nom_fichier):
       lignes = f.readlines() 
 
       for ligne in lignes:
-        tab.append(ligne.strip())
+        cont=ligne.strip().split()
+        aux=[]
+        aux.append(cont[0])
+        aux.append(cont[2])
+        
+        tab.append(aux)
 
     return tab
 
