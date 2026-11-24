@@ -5,6 +5,8 @@ from nltk.corpus import stopwords
 from bs4 import BeautifulSoup
 
 nltk.download("stopwords")
+
+
 def charger_requete(nom_fichier):
     stemmer = PorterStemmer()
     tab=[]
