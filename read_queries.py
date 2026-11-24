@@ -1,6 +1,10 @@
-
+import nltk
 from nltk.stem import PorterStemmer
+from nltk.probability import FreqDist
+from nltk.corpus import stopwords
+from bs4 import BeautifulSoup
 
+nltk.download("stopwords")
 def charger_requete(nom_fichier):
     stemmer = PorterStemmer()
     tab=[]
@@ -26,12 +30,13 @@ def charger_requete(nom_fichier):
     
 
 def charger_stopWord(nom_fichier):
-    tab=[]
+    tab=set(stopwords.words("english"))
     with open(nom_fichier, 'r') as f:
       lignes = f.readlines() 
 
       for ligne in lignes:
-        tab.append(ligne.strip())
+        if ligne.strip() not in tab:
+           tab.add(ligne.strip())
 
     return tab
 
@@ -45,3 +50,33 @@ def charger_stemp(nom_fichier):
         tab.append(ligne.strip())
 
     return tab
+
+
+def charger_donnees(fichiers):
+  stemmer = PorterStemmer()
+  donnees = {}
+  stopW = charger_stopWord("data/stopwords.txt")
+  
+  for fichier in fichiers:
+     with open(fichier, 'r') as f:
+        contenu = BeautifulSoup(f.read(), "html.parser")
+    
+        for doc in contenu.find_all("doc"):
+          docno = doc.find("docno").get_text(strip=True)
+    
+          texte = doc.find("text").get_text()
+      
+          texte = texte.replace("'", " ").replace("`", " ")
+          texte = texte.split()
+          
+          fdist = FreqDist()
+          for mot in texte:
+            if mot.lower() not in stopW:
+              fdist[mot.lower()] += 1
+          donnees[docno] = {"texte":fdist}
+
+  return donnees
+          
+           
+
+     
